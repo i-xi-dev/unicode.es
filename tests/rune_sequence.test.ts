@@ -183,3 +183,9 @@ Deno.test("RuneSequence.prototype.clone()", () => {
 //fromUtf16leEncoded
 //fromUtf32beEncoded
 //fromUtf32leEncoded
+//toUtf16beEncoded
+//toUtf16leEncoded
+//toUtf32beEncoded
+//toUtf32leEncoded
+//at
+//[Symbol.iterator]

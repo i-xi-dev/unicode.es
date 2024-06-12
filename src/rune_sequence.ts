@@ -7,6 +7,7 @@ import {
 } from "../deps.ts";
 import { CodePoint } from "./code_point.ts";
 import { Rune } from "./rune.ts";
+import { Utf16 } from "./utf16.ts";
 import { Utf32 } from "./utf32.ts";
 
 let _utf8Decoder: WeakRef<TextDecoder>;
@@ -75,6 +76,54 @@ function _utf8Encode(str: string): Uint8Array {
     _utf8Encoder = new WeakRef(new TextEncoder());
   }
   return _utf8Encoder.deref()!.encode(str);
+}
+
+let _utf16beEncoder: WeakRef<Utf16.Be.Encoder>;
+function _utf16beEncode(str: string): Uint8Array {
+  if (!_utf16beEncoder || !_utf16beEncoder.deref()) {
+    _utf16beEncoder = new WeakRef(
+      new Utf16.Be.Encoder({
+        fatal: true,
+      }),
+    );
+  }
+  return _utf16beEncoder.deref()!.encode(str);
+}
+
+let _utf16leEncoder: WeakRef<Utf16.Le.Encoder>;
+function _utf16leEncode(str: string): Uint8Array {
+  if (!_utf16leEncoder || !_utf16leEncoder.deref()) {
+    _utf16leEncoder = new WeakRef(
+      new Utf16.Le.Encoder({
+        fatal: true,
+      }),
+    );
+  }
+  return _utf16leEncoder.deref()!.encode(str);
+}
+
+let _utf32beEncoder: WeakRef<Utf32.Be.Encoder>;
+function _utf32beEncode(str: string): Uint8Array {
+  if (!_utf32beEncoder || !_utf32beEncoder.deref()) {
+    _utf32beEncoder = new WeakRef(
+      new Utf32.Be.Encoder({
+        fatal: true,
+      }),
+    );
+  }
+  return _utf32beEncoder.deref()!.encode(str);
+}
+
+let _utf32leEncoder: WeakRef<Utf32.Le.Encoder>;
+function _utf32leEncode(str: string): Uint8Array {
+  if (!_utf32leEncoder || !_utf32leEncoder.deref()) {
+    _utf32leEncoder = new WeakRef(
+      new Utf32.Le.Encoder({
+        fatal: true,
+      }),
+    );
+  }
+  return _utf32leEncoder.deref()!.encode(str);
 }
 
 export class RuneSequence {
@@ -197,8 +246,30 @@ export class RuneSequence {
 
   //XXX fromUtf32Encoded
 
+  //XXX decodeFrom
+
+  //XXX fromXxxxStream
+
+  //XXX fromxxxArray
+
   clone(): RuneSequence {
     return new RuneSequence(this.toRunes());
+  }
+
+  //XXX equals
+
+  //XXX startsWith
+
+  //XXX duplicate
+
+  //XXX subsequence
+
+  at(index: number): Rune | undefined {
+    return this.#runes.at(index);
+  }
+
+  [Symbol.iterator](): IterableIterator<Rune> {
+    return this.#runes[Symbol.iterator]();
   }
 
   toString(): string {
@@ -217,6 +288,30 @@ export class RuneSequence {
   toUtf8Encoded(): Uint8Array {
     return _utf8Encode(this.toString());
   }
+
+  //XXX options discardBom
+  toUtf16beEncoded(): Uint8Array {
+    return _utf16beEncode(this.toString());
+  }
+
+  //XXX options discardBom
+  toUtf16leEncoded(): Uint8Array {
+    return _utf16leEncode(this.toString());
+  }
+
+  //XXX toUtf16Encoded
+
+  //XXX options discardBom
+  toUtf32beEncoded(): Uint8Array {
+    return _utf32beEncode(this.toString());
+  }
+
+  //XXX options discardBom
+  toUtf32leEncoded(): Uint8Array {
+    return _utf32leEncode(this.toString());
+  }
+
+  //XXX toUtf32Encoded
 
   toCodePoints(): Array<CodePoint> {
     return this.#runes.map((rune) => rune.toCodePoint());
