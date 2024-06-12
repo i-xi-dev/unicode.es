@@ -1,6 +1,18 @@
+import { BufferUtils, SafeInteger, StringEx, Uint16 } from "../deps.ts";
 import { CodePoint } from "./code_point.ts";
 import { Rune } from "./rune.ts";
-import { SafeInteger, StringEx, Uint16 } from "../deps.ts";
+
+let _utf8Decoder: WeakRef<TextDecoder>;
+function _utf8Decode(bytes: BufferSource): string {
+  if (!_utf8Decoder || !_utf8Decoder.deref()) {
+    _utf8Decoder = new WeakRef(
+      new TextDecoder("utf-8", {
+        fatal: true,
+      }),
+    );
+  }
+  return _utf8Decoder.deref()!.decode(bytes);
+}
 
 export class RuneSequence {
   readonly #runes: Array<Rune>;
@@ -51,6 +63,21 @@ export class RuneSequence {
     return new RuneSequence([...runes]);
   }
 
+  //XXX options discardBom
+  static fromUtf8Encoded(
+    encoded: BufferSource | Iterable<number>,
+  ): RuneSequence {
+    if ((encoded instanceof ArrayBuffer) || ArrayBuffer.isView(encoded)) {
+      return RuneSequence.fromString(_utf8Decode(encoded));
+    } else if (encoded) {
+      const bytes = BufferUtils.fromUint8Iterable(encoded);
+      return RuneSequence.fromString(_utf8Decode(bytes));
+    }
+    throw new TypeError("source");
+  }
+
+  //XXX static fromUtf16beEncoded(encoded: BufferSource | Iterable<number>): RuneSequence {}
+
   clone(): RuneSequence {
     return new RuneSequence(this.toRunes());
   }
@@ -66,6 +93,8 @@ export class RuneSequence {
   toRunes(): Array<Rune> {
     return this.#runes.map((rune) => rune.clone());
   }
+
+  //XXX toUtf8Encoded(): Uint8Array {}
 
   toCodePoints(): Array<CodePoint> {
     return this.#runes.map((rune) => rune.toCodePoint());

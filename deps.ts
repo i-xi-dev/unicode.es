@@ -1,4 +1,8 @@
 export {
+  BufferUtils,
+  ByteOrder,
+} from "https://raw.githubusercontent.com/i-xi-dev/buffer-utils.es/6.2.3/mod.ts";
+export {
   NumberEx,
   NumberRange,
   Radix,
