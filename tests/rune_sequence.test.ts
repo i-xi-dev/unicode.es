@@ -178,4 +178,8 @@ Deno.test("RuneSequence.prototype.clone()", () => {
 //toCodePoints
 //toCharCodes
 //fromUtf8Encoded
-//
+//toUtf8Encoded
+//fromUtf16beEncoded
+//fromUtf16leEncoded
+//fromUtf32beEncoded
+//fromUtf32leEncoded
