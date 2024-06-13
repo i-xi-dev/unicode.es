@@ -237,25 +237,89 @@ Deno.test("RuneSequence.prototype.toUtf8Encoded()", () => {
   // ); Runeは孤立サロゲートを許容してない
 });
 
-//TODO
 Deno.test("RuneSequence.fromUtf16beEncoded()", () => {
-  // assertStrictEquals(RuneSequence.fromUtf16beEncoded([]).toString(), "");
+  assertStrictEquals(RuneSequence.fromUtf16beEncoded([]).toString(), "");
+  assertStrictEquals(
+    RuneSequence.fromUtf16beEncoded([0x30, 0x42, 0, 97, 0, 49]).toString(),
+    "あa1",
+  );
   // assertStrictEquals(
-  //   RuneSequence.fromUtf16beEncoded([0x30, 0x42,0, 97,0, 49]).toString(),
-  //   "あa1",
-  // );
-  // assertStrictEquals(
-  //   RuneSequence.fromUtf16beEncoded([227, 129, 130, 97, 239, 191, 189, 49])
+  //   RuneSequence.fromUtf16beEncoded([0x30, 0x42,0, 97,0xD8,0, 0, 49])
   //     .toString(),
   //   "あa\uD8001",
   // );
+  assertThrows(
+    () => {
+      RuneSequence.fromUtf16beEncoded([0x30, 0x42, 0, 97, 0xD8, 0, 0, 49]);
+    },
+    TypeError,
+    //"The encoded data is not valid.",
+  );
 
+  assertStrictEquals(
+    RuneSequence.fromUtf16beEncoded(Uint8Array.of()).toString(),
+    "",
+  );
+  assertStrictEquals(
+    RuneSequence.fromUtf16beEncoded(Uint8Array.of(0x30, 0x42, 0, 97, 0, 49))
+      .toString(),
+    "あa1",
+  );
+  assertThrows(
+    () => {
+      RuneSequence.fromUtf16beEncoded(
+        Uint8Array.of(0x30, 0x42, 0, 97, 0xD8, 0, 0, 49),
+      );
+    },
+    TypeError,
+    //"The encoded data is not valid.",
+  );
+});
+
+Deno.test("RuneSequence.fromUtf16leEncoded()", () => {
+  assertStrictEquals(RuneSequence.fromUtf16leEncoded([]).toString(), "");
+  assertStrictEquals(
+    RuneSequence.fromUtf16leEncoded([0x42, 0x30, 97, 0, 49, 0]).toString(),
+    "あa1",
+  );
+  // assertStrictEquals(
+  //   RuneSequence.fromUtf16leEncoded([ 0x42,0x30, 97,0,0, 0xD8, 49,0])
+  //     .toString(),
+  //   "あa\uD8001",
+  // );
+  assertThrows(
+    () => {
+      RuneSequence.fromUtf16leEncoded([0x42, 0x30, 97, 0, 0, 0xD8, 49, 0]);
+    },
+    TypeError,
+    //"The encoded data is not valid.",
+  );
+
+  assertStrictEquals(
+    RuneSequence.fromUtf16leEncoded(Uint8Array.of()).toString(),
+    "",
+  );
+  assertStrictEquals(
+    RuneSequence.fromUtf16leEncoded(Uint8Array.of(0x42, 0x30, 97, 0, 49, 0))
+      .toString(),
+    "あa1",
+  );
+  assertThrows(
+    () => {
+      RuneSequence.fromUtf16leEncoded(
+        Uint8Array.of(0x42, 0x30, 97, 0, 0, 0xD8, 49, 0),
+      );
+    },
+    TypeError,
+    //"The encoded data is not valid.",
+  );
 });
 
 //TODO
 //toCodePoints
 //toCharCodes
-//fromUtf16leEncoded
+//fromCharCodes
+//fromCodePoints
 //fromUtf32beEncoded
 //fromUtf32leEncoded
 //toUtf16beEncoded

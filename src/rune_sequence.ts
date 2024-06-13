@@ -10,6 +10,17 @@ import { Rune } from "./rune.ts";
 import { Utf16 } from "./utf16.ts";
 import { Utf32 } from "./utf32.ts";
 
+type _Bytes = BufferSource | Iterable<number>;
+
+function _bytesToBuffer(bytes: _Bytes): BufferSource {
+  if ((bytes instanceof ArrayBuffer) || ArrayBuffer.isView(bytes)) {
+    return bytes;
+  } else if (bytes && (Symbol.iterator in bytes)) {
+    return BufferUtils.fromUint8Iterable(bytes); // bytesがiteratorを持ってない場合または要素がUint8ではない場合エラー
+  }
+  throw new TypeError("bytes");
+}
+
 let _utf8Decoder: WeakRef<TextDecoder>;
 function _utf8Decode(bytes: BufferSource): string {
   if (!_utf8Decoder || !_utf8Decoder.deref()) {
@@ -177,73 +188,71 @@ export class RuneSequence {
   }
 
   //XXX options discardBom
-  static fromUtf8Encoded(encoded: RuneSequence.Encoded): RuneSequence {
-    if ((encoded instanceof ArrayBuffer) || ArrayBuffer.isView(encoded)) {
-      return RuneSequence.fromString(_utf8Decode(encoded));
-    } else if (encoded) {
-      const bytes = BufferUtils.fromUint8Iterable(encoded);
-      return RuneSequence.fromString(_utf8Decode(bytes));
-    }
-    throw new TypeError("encoded");
+  static fromUtf8Encoded(encoded: _Bytes): RuneSequence {
+    const bytes = _bytesToBuffer(encoded);
+    return RuneSequence.fromString(_utf8Decode(bytes)); //TODO 孤立サロゲートの扱いがここだけ違う
   }
 
   //XXX options discardBom
-  static fromUtf16beEncoded(encoded: RuneSequence.Encoded): RuneSequence {
-    if ((encoded instanceof ArrayBuffer) || ArrayBuffer.isView(encoded)) {
-      return RuneSequence.fromString(_utf16beDecode(encoded));
-    } else if (encoded) {
-      const bytes = BufferUtils.fromUint16Iterable(
-        encoded,
-        ByteOrder.BIG_ENDIAN,
-      );//TODO これバイト列でなくてcahrcodesなのでメソッド分ける
-      return RuneSequence.fromString(_utf16beDecode(bytes));
-    }
-    throw new TypeError("encoded");
+  static fromUtf16beEncoded(encoded: _Bytes): RuneSequence {
+    const bytes = _bytesToBuffer(encoded);
+    return RuneSequence.fromString(_utf16beDecode(bytes));
   }
 
   //XXX options discardBom
-  static fromUtf16leEncoded(encoded: RuneSequence.Encoded): RuneSequence {
-    if ((encoded instanceof ArrayBuffer) || ArrayBuffer.isView(encoded)) {
-      return RuneSequence.fromString(_utf16leDecode(encoded));
-    } else if (encoded) {
-      const bytes = BufferUtils.fromUint16Iterable(
-        encoded,
-        ByteOrder.LITTLE_ENDIAN,
-      );
-      return RuneSequence.fromString(_utf16leDecode(bytes));
-    }
-    throw new TypeError("encoded");
+  static fromUtf16leEncoded(encoded: _Bytes): RuneSequence {
+    const bytes = _bytesToBuffer(encoded);
+    return RuneSequence.fromString(_utf16leDecode(bytes));
   }
 
   //XXX fromUtf16Encoded
 
-  //XXX options discardBom
-  static fromUtf32beEncoded(encoded: RuneSequence.Encoded): RuneSequence {
-    if ((encoded instanceof ArrayBuffer) || ArrayBuffer.isView(encoded)) {
-      return RuneSequence.fromString(_utf32beDecode(encoded));
-    } else if (encoded) {
-      const bytes = BufferUtils.fromUint32Iterable(
-        encoded,
-        ByteOrder.BIG_ENDIAN,
-      );
-      return RuneSequence.fromString(_utf32beDecode(bytes));
+  static fromCharCodes(
+    charCodes: Iterable<number> | Uint16Array,
+  ): RuneSequence {
+    let charCodesBuffer: ArrayBuffer; //TODO 面倒なことせずにfromCharCodeした方が速いのでは
+    if ((charCodes instanceof ArrayBuffer) || ArrayBuffer.isView(charCodes)) {
+      charCodesBuffer = charCodes;
+    } else if (charCodes && (Symbol.iterator in charCodes)) {
+      charCodesBuffer = BufferUtils.fromUint16Iterable(charCodes);
+    } else {
+      throw new TypeError("charCodes");
     }
-    throw new TypeError("encoded");
+
+    if (BufferUtils.BYTE_ORDER === ByteOrder.BIG_ENDIAN) {
+      return RuneSequence.fromString(_utf16beDecode(charCodesBuffer));
+    } else {
+      return RuneSequence.fromString(_utf16leDecode(charCodesBuffer));
+    }
   }
 
-  //XXX options discardBom
-  static fromUtf32leEncoded(encoded: RuneSequence.Encoded): RuneSequence {
-    if ((encoded instanceof ArrayBuffer) || ArrayBuffer.isView(encoded)) {
-      return RuneSequence.fromString(_utf32leDecode(encoded));
-    } else if (encoded) {
-      const bytes = BufferUtils.fromUint32Iterable(
-        encoded,
-        ByteOrder.LITTLE_ENDIAN,
-      );
-      return RuneSequence.fromString(_utf32leDecode(bytes));
-    }
-    throw new TypeError("encoded");
-  }
+  // //XXX options discardBom
+  // static fromUtf32beEncoded(encoded: _Bytes): RuneSequence {
+  //   if ((encoded instanceof ArrayBuffer) || ArrayBuffer.isView(encoded)) {
+  //     return RuneSequence.fromString(_utf32beDecode(encoded));
+  //   } else if (encoded) {
+  //     const bytes = BufferUtils.fromUint32Iterable(
+  //       encoded,
+  //       ByteOrder.BIG_ENDIAN,
+  //     );
+  //     return RuneSequence.fromString(_utf32beDecode(bytes));
+  //   }
+  //   throw new TypeError("encoded");
+  // }
+
+  // //XXX options discardBom
+  // static fromUtf32leEncoded(encoded: _Bytes): RuneSequence {
+  //   if ((encoded instanceof ArrayBuffer) || ArrayBuffer.isView(encoded)) {
+  //     return RuneSequence.fromString(_utf32leDecode(encoded));
+  //   } else if (encoded) {
+  //     const bytes = BufferUtils.fromUint32Iterable(
+  //       encoded,
+  //       ByteOrder.LITTLE_ENDIAN,
+  //     );
+  //     return RuneSequence.fromString(_utf32leDecode(bytes));
+  //   }
+  //   throw new TypeError("encoded");
+  // }
 
   //XXX fromUtf32Encoded
 
@@ -323,8 +332,4 @@ export class RuneSequence {
   toCharCodes(): Array<[Uint16] | [Uint16, Uint16]> {
     return this.#runes.map((rune) => rune.toCharCodes());
   }
-}
-
-export namespace RuneSequence {
-  export type Encoded = BufferSource | Iterable<number>;
 }
