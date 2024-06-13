@@ -174,12 +174,87 @@ Deno.test("RuneSequence.prototype.clone()", () => {
   );
 });
 
+Deno.test("RuneSequence.fromUtf8Encoded()", () => {
+  assertStrictEquals(RuneSequence.fromUtf8Encoded([]).toString(), "");
+  assertStrictEquals(
+    RuneSequence.fromUtf8Encoded([227, 129, 130, 97, 49]).toString(),
+    "あa1",
+  );
+  assertStrictEquals(
+    RuneSequence.fromUtf8Encoded([227, 129, 130, 97, 239, 191, 189, 49])
+      .toString(),
+    //"あa\uD8001", //TODO utf16,32も同じ仕様か
+    "あa\uFFFD1",
+  );
+
+  assertStrictEquals(
+    RuneSequence.fromUtf8Encoded(Uint8Array.of()).toString(),
+    "",
+  );
+  assertStrictEquals(
+    RuneSequence.fromUtf8Encoded(Uint8Array.of(227, 129, 130, 97, 49))
+      .toString(),
+    "あa1",
+  );
+  assertStrictEquals(
+    RuneSequence.fromUtf8Encoded(
+      Uint8Array.of(227, 129, 130, 97, 239, 191, 189, 49),
+    ).toString(),
+    //"あa\uD8001", //TODO utf16,32も同じ仕様か
+    "あa\uFFFD1",
+  );
+
+  assertStrictEquals(
+    RuneSequence.fromUtf8Encoded(Uint8Array.of().buffer).toString(),
+    "",
+  );
+  assertStrictEquals(
+    RuneSequence.fromUtf8Encoded(Uint8Array.of(227, 129, 130, 97, 49).buffer)
+      .toString(),
+    "あa1",
+  );
+  assertStrictEquals(
+    RuneSequence.fromUtf8Encoded(
+      Uint8Array.of(227, 129, 130, 97, 239, 191, 189, 49).buffer,
+    ).toString(),
+    //"あa\uD8001", //TODO utf16,32も同じ仕様か
+    "あa\uFFFD1",
+  );
+});
+
+Deno.test("RuneSequence.prototype.toUtf8Encoded()", () => {
+  assertStrictEquals(
+    [...RuneSequence.fromString("").toUtf8Encoded()].join(","),
+    "",
+  );
+  assertStrictEquals(
+    [...RuneSequence.fromString("あa1").toUtf8Encoded()].join(","),
+    "227,129,130,97,49",
+  );
+  // assertStrictEquals(
+  //   [...RuneSequence.fromString("あa\uD8001").toUtf8Encoded()].join(","),
+  //   "227,129,130,97,239,191,189,49",
+  // ); Runeは孤立サロゲートを許容してない
+});
+
+//TODO
+Deno.test("RuneSequence.fromUtf16beEncoded()", () => {
+  // assertStrictEquals(RuneSequence.fromUtf16beEncoded([]).toString(), "");
+  // assertStrictEquals(
+  //   RuneSequence.fromUtf16beEncoded([0x30, 0x42,0, 97,0, 49]).toString(),
+  //   "あa1",
+  // );
+  // assertStrictEquals(
+  //   RuneSequence.fromUtf16beEncoded([227, 129, 130, 97, 239, 191, 189, 49])
+  //     .toString(),
+  //   "あa\uD8001",
+  // );
+
+});
+
 //TODO
 //toCodePoints
 //toCharCodes
-//fromUtf8Encoded
-//toUtf8Encoded
-//fromUtf16beEncoded
 //fromUtf16leEncoded
 //fromUtf32beEncoded
 //fromUtf32leEncoded

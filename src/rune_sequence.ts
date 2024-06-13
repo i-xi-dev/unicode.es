@@ -20,6 +20,7 @@ function _utf8Decode(bytes: BufferSource): string {
     );
   }
   return _utf8Decoder.deref()!.decode(bytes);
+  // 孤立サロゲートがU+FFFDになるのは仕様
 }
 
 let _utf16beDecoder: WeakRef<TextDecoder>;
@@ -194,7 +195,7 @@ export class RuneSequence {
       const bytes = BufferUtils.fromUint16Iterable(
         encoded,
         ByteOrder.BIG_ENDIAN,
-      );
+      );//TODO これバイト列でなくてcahrcodesなのでメソッド分ける
       return RuneSequence.fromString(_utf16beDecode(bytes));
     }
     throw new TypeError("encoded");
@@ -263,6 +264,8 @@ export class RuneSequence {
   //XXX duplicate
 
   //XXX subsequence
+
+  //TODO grapheme cluster単位に分割(locale: Intl.Locale | string): Array<RuneSequence>
 
   at(index: number): Rune | undefined {
     return this.#runes.at(index);
