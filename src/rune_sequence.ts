@@ -236,33 +236,17 @@ export class RuneSequence {
   //   return RuneSequence.fromString(decoded);
   // }
 
-  // //XXX options discardBom
-  // static fromUtf32beEncoded(encoded: _Bytes): RuneSequence {
-  //   if ((encoded instanceof ArrayBuffer) || ArrayBuffer.isView(encoded)) {
-  //     return RuneSequence.fromString(_utf32beDecode(encoded));
-  //   } else if (encoded) {
-  //     const bytes = BufferUtils.fromUint32Iterable(
-  //       encoded,
-  //       ByteOrder.BIG_ENDIAN,
-  //     );
-  //     return RuneSequence.fromString(_utf32beDecode(bytes));
-  //   }
-  //   throw new TypeError("encoded");
-  // }
+  //XXX options discardBom
+  static fromUtf32beEncoded(encoded: _Bytes): RuneSequence {
+    const bytes = _bytesToBuffer(encoded);
+    return RuneSequence.fromString(_utf32beDecode(bytes));
+  }
 
-  // //XXX options discardBom
-  // static fromUtf32leEncoded(encoded: _Bytes): RuneSequence {
-  //   if ((encoded instanceof ArrayBuffer) || ArrayBuffer.isView(encoded)) {
-  //     return RuneSequence.fromString(_utf32leDecode(encoded));
-  //   } else if (encoded) {
-  //     const bytes = BufferUtils.fromUint32Iterable(
-  //       encoded,
-  //       ByteOrder.LITTLE_ENDIAN,
-  //     );
-  //     return RuneSequence.fromString(_utf32leDecode(bytes));
-  //   }
-  //   throw new TypeError("encoded");
-  // }
+  //XXX options discardBom
+  static fromUtf32leEncoded(encoded: _Bytes): RuneSequence {
+    const bytes = _bytesToBuffer(encoded);
+    return RuneSequence.fromString(_utf32leDecode(bytes));
+  }
 
   //XXX fromUtf32Encoded
 
