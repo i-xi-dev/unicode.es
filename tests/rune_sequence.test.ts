@@ -370,6 +370,18 @@ Deno.test("RuneSequence.fromCharCodes()", () => {
   );
 });
 
+Deno.test("RuneSequence.prototype.toCharCodes()", () => {
+  assertStrictEquals(
+    [...RuneSequence.fromString("").toCharCodes()].join(","),
+    "",
+  );
+  assertStrictEquals(
+    [...RuneSequence.fromString("あa1").toCharCodes()].join(","),
+    "12354,97,49",
+  );
+  // Runeは孤立サロゲートを許容してない
+});
+
 Deno.test("RuneSequence.fromUtf32beEncoded()", () => {
   assertStrictEquals(RuneSequence.fromUtf32beEncoded([]).toString(), "");
   assertStrictEquals(
@@ -451,6 +463,18 @@ Deno.test("RuneSequence.fromUtf32beEncoded()", () => {
     TypeError,
     //"The encoded data is not valid.",
   );
+});
+
+Deno.test("RuneSequence.prototype.toUtf32beEncoded()", () => {
+  assertStrictEquals(
+    [...RuneSequence.fromString("").toUtf32beEncoded()].join(","),
+    "",
+  );
+  assertStrictEquals(
+    [...RuneSequence.fromString("あa1").toUtf32beEncoded()].join(","),
+    "0,0,48,66,0,0,0,97,0,0,0,49",
+  );
+  // Runeは孤立サロゲートを許容してない
 });
 
 Deno.test("RuneSequence.fromUtf32leEncoded()", () => {
@@ -536,6 +560,18 @@ Deno.test("RuneSequence.fromUtf32leEncoded()", () => {
   );
 });
 
+Deno.test("RuneSequence.prototype.toUtf32leEncoded()", () => {
+  assertStrictEquals(
+    [...RuneSequence.fromString("").toUtf32leEncoded()].join(","),
+    "",
+  );
+  assertStrictEquals(
+    [...RuneSequence.fromString("あa1").toUtf32leEncoded()].join(","),
+    "66,48,0,0,97,0,0,0,49,0,0,0",
+  );
+  // Runeは孤立サロゲートを許容してない
+});
+
 Deno.test("RuneSequence.fromCodePoints()", () => {
   assertStrictEquals(RuneSequence.fromCodePoints([]).toString(), "");
   assertStrictEquals(
@@ -581,8 +617,5 @@ Deno.test("RuneSequence.fromCodePoints()", () => {
 
 //TODO
 //toCodePoints
-//toCharCodes
-//toUtf32beEncoded
-//toUtf32leEncoded
 //at
 //[Symbol.iterator]
