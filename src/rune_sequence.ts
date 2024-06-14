@@ -7,6 +7,7 @@ import {
 } from "../deps.ts";
 import { CodePoint } from "./code_point.ts";
 import { Rune } from "./rune.ts";
+import { RuneString } from "./rune_string.ts";
 import { Utf16 } from "./utf16.ts";
 import { Utf32 } from "./utf32.ts";
 
@@ -213,6 +214,9 @@ export class RuneSequence {
       if (Uint16.isUint16(charCode) !== true) {
         throw new TypeError("charCodes[*]");
       }
+      if (CodePoint.isSurrogate(charCode)) {
+        throw new RangeError("charCodes[*]");
+      }
       chars.push(String.fromCharCode(charCode));
     }
     return RuneSequence.fromString(chars.join(StringEx.EMPTY));
@@ -222,7 +226,7 @@ export class RuneSequence {
   // static fromCharCodes2(
   //   charCodes: Iterable<number> | Uint16Array,
   // ): RuneSequence {
-  //   let charCodesBuffer: ArrayBuffer; //TODO 面倒なことせずにfromCharCodeした方が速いのでは
+  //   let charCodesBuffer: ArrayBuffer;
   //   if ((charCodes instanceof ArrayBuffer) || ArrayBuffer.isView(charCodes)) {
   //     charCodesBuffer = charCodes;
   //   } else if (charCodes && (Symbol.iterator in charCodes)) {
@@ -249,6 +253,14 @@ export class RuneSequence {
   }
 
   //XXX fromUtf32Encoded
+
+  static fromCodePoints(codePoints: Iterable<number>): RuneSequence {
+    const runeStrings = [];
+    for (const codePoint of codePoints) {
+      runeStrings.push(RuneString.fromCodePoint(codePoint));
+    }
+    return RuneSequence.fromRuneStrings(runeStrings);
+  }
 
   //XXX decodeFrom
 

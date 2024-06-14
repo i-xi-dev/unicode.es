@@ -14,7 +14,7 @@ const _VSS = [
   Block.VARIATION_SELECTORS_SUPPLEMENT,
   [0x180B, 0x180F],
 ] as CodePointRange[];
-//TODO c0,c1,
+//XXX c0,c1,
 
 function _isPlane(test: unknown): test is Plane {
   return Number.isSafeInteger(test) &&

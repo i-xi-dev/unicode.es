@@ -4,7 +4,7 @@ export class GraphemeCluster {
   //readonly #runes: RuneSequence;
   readonly #locale?: Intl.Locale;
 
-  //TODO
+  //XXX
   // - クラスタ数が1でなければエラー
   // - normalize(NFC,NFD,...)してGraphemeCluster単位に分割したRuneSequenceの配列に変換
   // - GraphemeCluster単位に分割したRuneSequenceの配列に変換
