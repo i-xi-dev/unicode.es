@@ -262,7 +262,7 @@ export class RuneSequence {
     return RuneSequence.fromRuneStrings(runeStrings);
   }
 
-  //XXX decodeFrom
+  //XXX fromEncoded(encoded: _Bytes, decoder): RuneSequence
 
   //XXX fromXxxxStream
 
