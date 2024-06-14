@@ -154,13 +154,15 @@ Deno.test("RuneSequence.fromRunes(Rune[]) , RuneSequence.prototype.toRunes()", (
   );
 });
 
-Deno.test("RuneSequence.prototype.clone()", () => {
+Deno.test("RuneSequence.prototype.duplicate()", () => {
   assertStrictEquals(
-    RuneSequence.fromRuneStrings([]).clone().toRuneStrings().join(","),
+    RuneSequence.fromRuneStrings([]).duplicate().toRuneStrings().join(","),
     "",
   );
   assertStrictEquals(
-    RuneSequence.fromRuneStrings(["\u0000"]).clone().toRuneStrings().join(","),
+    RuneSequence.fromRuneStrings(["\u0000"]).duplicate().toRuneStrings().join(
+      ",",
+    ),
     "\u0000",
   );
   assertStrictEquals(
@@ -169,7 +171,7 @@ Deno.test("RuneSequence.prototype.clone()", () => {
       "\uFFFF",
       "\u{10000}",
       "\u{10FFFF}",
-    ]).clone().toRuneStrings().join(","),
+    ]).duplicate().toRuneStrings().join(","),
     "\u0000,\uFFFF,\u{10000},\u{10FFFF}",
   );
 });
@@ -378,6 +380,10 @@ Deno.test("RuneSequence.prototype.toCharCodes()", () => {
   assertStrictEquals(
     [...RuneSequence.fromString("あa1").toCharCodes()].join(","),
     "12354,97,49",
+  );
+  assertStrictEquals(
+    [...RuneSequence.fromString("あ\u{10000}a1").toCharCodes()].join(","),
+    "12354,55296,56320,97,49",
   );
   // Runeは孤立サロゲートを許容してない
 });
@@ -615,7 +621,23 @@ Deno.test("RuneSequence.fromCodePoints()", () => {
   );
 });
 
+Deno.test("RuneSequence.prototype.toCodePoints()", () => {
+  assertStrictEquals(
+    [...RuneSequence.fromString("").toCodePoints()].join(","),
+    "",
+  );
+  assertStrictEquals(
+    [...RuneSequence.fromString("あa1").toCodePoints()].join(","),
+    "12354,97,49",
+  );
+  assertStrictEquals(
+    [...RuneSequence.fromString("あ\u{10000}a1").toCodePoints()].join(","),
+    "12354,65536,97,49",
+  );
+  // Runeは孤立サロゲートを許容してない
+});
+
 //TODO
-//toCodePoints
+//
 //at
 //[Symbol.iterator]

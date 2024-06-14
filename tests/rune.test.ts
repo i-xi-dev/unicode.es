@@ -549,12 +549,18 @@ Deno.test("Rune.prototype.matchesGeneralCategories(string[])", () => {
   );
 });
 
-Deno.test("Rune.prototype.clone()", () => {
-  assertStrictEquals(Rune.fromCodePoint(0).clone().toCodePoint(), 0);
+Deno.test("Rune.prototype.duplicate()", () => {
+  assertStrictEquals(Rune.fromCodePoint(0).duplicate().toCodePoint(), 0);
   assertStrictEquals(
-    Rune.fromCodePoint(0x10FFFF).clone().toCodePoint(),
+    Rune.fromCodePoint(0x10FFFF).duplicate().toCodePoint(),
     0x10FFFF,
   );
-  assertStrictEquals(Rune.fromCodePoint(0xD7FF).clone().toCodePoint(), 0xD7FF);
-  assertStrictEquals(Rune.fromCodePoint(0xE000).clone().toCodePoint(), 0xE000);
+  assertStrictEquals(
+    Rune.fromCodePoint(0xD7FF).duplicate().toCodePoint(),
+    0xD7FF,
+  );
+  assertStrictEquals(
+    Rune.fromCodePoint(0xE000).duplicate().toCodePoint(),
+    0xE000,
+  );
 });

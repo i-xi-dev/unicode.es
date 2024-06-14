@@ -38,7 +38,7 @@ export class Rune {
     return Rune.fromString(RuneString.fromCharCodes(charCodes));
   }
 
-  clone(): Rune {
+  duplicate(): Rune {
     return new Rune(this.#codePoint);
   }
 

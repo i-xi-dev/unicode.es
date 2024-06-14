@@ -268,15 +268,13 @@ export class RuneSequence {
 
   //XXX fromxxxArray
 
-  clone(): RuneSequence {
+  duplicate(): RuneSequence {
     return new RuneSequence(this.toRunes());
   }
 
   //XXX equals
 
   //XXX startsWith
-
-  //XXX duplicate
 
   //XXX subsequence
 
@@ -299,7 +297,7 @@ export class RuneSequence {
   }
 
   toRunes(): Array<Rune> {
-    return this.#runes.map((rune) => rune.clone());
+    return this.#runes.map((rune) => rune.duplicate());
   }
 
   //XXX options discardBom
@@ -319,6 +317,10 @@ export class RuneSequence {
 
   //XXX toUtf16Encoded
 
+  toCharCodes(): Array<[Uint16] | [Uint16, Uint16]> {
+    return this.#runes.map((rune) => rune.toCharCodes());
+  }
+
   //XXX options discardBom
   toUtf32beEncoded(): Uint8Array {
     return _utf32beEncode(this.toString());
@@ -333,9 +335,5 @@ export class RuneSequence {
 
   toCodePoints(): Array<CodePoint> {
     return this.#runes.map((rune) => rune.toCodePoint());
-  }
-
-  toCharCodes(): Array<[Uint16] | [Uint16, Uint16]> {
-    return this.#runes.map((rune) => rune.toCharCodes());
   }
 }
