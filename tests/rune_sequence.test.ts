@@ -637,7 +637,37 @@ Deno.test("RuneSequence.prototype.toCodePoints()", () => {
   // Runeは孤立サロゲートを許容してない
 });
 
-//TODO
-//
-//at
-//[Symbol.iterator]
+Deno.test("RuneSequence.prototype.at()", () => {
+  assertStrictEquals(
+    RuneSequence.fromString("").at(0),
+    undefined,
+  );
+  const r1 = RuneSequence.fromString("あa1");
+  assertStrictEquals(r1.at(0)?.toString(), "あ");
+  assertStrictEquals(r1.at(1)?.toString(), "a");
+  assertStrictEquals(r1.at(2)?.toString(), "1");
+  const r2 = RuneSequence.fromString("あ\u{10000}a1");
+  assertStrictEquals(r2.at(0)?.toString(), "あ");
+  assertStrictEquals(r2.at(1)?.toString(), "\u{10000}");
+  assertStrictEquals(r2.at(2)?.toString(), "a");
+  assertStrictEquals(r2.at(3)?.toString(), "1");
+  assertStrictEquals(r2.at(4)?.toString(), undefined);
+  assertStrictEquals(r2.at(-1)?.toString(), "1");
+  assertStrictEquals(r2.at(-2)?.toString(), "a");
+  assertStrictEquals(r2.at(-3)?.toString(), "\u{10000}");
+  assertStrictEquals(r2.at(-4)?.toString(), "あ");
+  assertStrictEquals(r2.at(-5)?.toString(), undefined);
+});
+
+Deno.test("RuneSequence.prototype.[Symbol.iterator]()", () => {
+  const r2 = RuneSequence.fromString("あ\u{10000}a1");
+  let i = 0;
+  for (const r of r2) {
+    if (i === 0) assertStrictEquals(r.toString(), "あ");
+    else if (i === 1) assertStrictEquals(r.toString(), "\u{10000}");
+    else if (i === 2) assertStrictEquals(r.toString(), "a");
+    else if (i === 3) assertStrictEquals(r.toString(), "1");
+    i++;
+  }
+  assertStrictEquals(i, 4);
+});

@@ -9,7 +9,7 @@ const _MAX_BYTES_PER_RUNE = 4;
 
 type _RuneBytes = Array<Uint8>; // [Uint8, Uint8] | [Uint8, Uint8, Uint8, Uint8] ;
 
-//TODO プラットフォームのバイトオーダーでエンコード
+//XXX プラットフォームのバイトオーダーでエンコード
 // function _encode(
 //   srcString: string,
 //   dstBuffer: ArrayBuffer,

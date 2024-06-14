@@ -21,7 +21,7 @@ const _formatOptions = SafeIntegerFormat.Options.resolve({
   radix: Radix.HEXADECIMAL,
 });
 
-//TODO プラットフォームのバイトオーダーでエンコード
+//XXX プラットフォームのバイトオーダーでエンコード
 
 function _decodeShared(
   srcBuffer: ArrayBuffer,
