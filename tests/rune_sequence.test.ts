@@ -243,11 +243,6 @@ Deno.test("RuneSequence.fromUtf16beEncoded()", () => {
     RuneSequence.fromUtf16beEncoded([0x30, 0x42, 0, 97, 0, 49]).toString(),
     "あa1",
   );
-  // assertStrictEquals(
-  //   RuneSequence.fromUtf16beEncoded([0x30, 0x42,0, 97,0xD8,0, 0, 49])
-  //     .toString(),
-  //   "あa\uD8001",
-  // );
   assertThrows(
     () => {
       RuneSequence.fromUtf16beEncoded([0x30, 0x42, 0, 97, 0xD8, 0, 0, 49]);
@@ -315,10 +310,43 @@ Deno.test("RuneSequence.fromUtf16leEncoded()", () => {
   );
 });
 
+Deno.test("RuneSequence.fromCharCodes()", () => {
+  assertStrictEquals(RuneSequence.fromCharCodes([]).toString(), "");
+  assertStrictEquals(
+    RuneSequence.fromCharCodes([0x3042, 97, 49]).toString(),
+    "あa1",
+  );
+  assertThrows(
+    () => {
+      RuneSequence.fromCharCodes([0x3042, 97, 0xD800, 49]);
+    },
+    TypeError,
+    //"The encoded data is not valid.",
+  );
+
+  assertStrictEquals(
+    RuneSequence.fromCharCodes(Uint16Array.of()).toString(),
+    "",
+  );
+  assertStrictEquals(
+    RuneSequence.fromCharCodes(Uint16Array.of(0x3042, 97, 49))
+      .toString(),
+    "あa1",
+  );
+  assertThrows(
+    () => {
+      RuneSequence.fromCharCodes(
+        Uint16Array.of(0x3042, 97, 0xD800, 49),
+      );
+    },
+    TypeError,
+    //"The encoded data is not valid.",
+  );
+});
+
 //TODO
 //toCodePoints
 //toCharCodes
-//fromCharCodes
 //fromCodePoints
 //fromUtf32beEncoded
 //fromUtf32leEncoded

@@ -207,24 +207,34 @@ export class RuneSequence {
 
   //XXX fromUtf16Encoded
 
-  static fromCharCodes(
-    charCodes: Iterable<number> | Uint16Array,
-  ): RuneSequence {
-    let charCodesBuffer: ArrayBuffer; //TODO 面倒なことせずにfromCharCodeした方が速いのでは
-    if ((charCodes instanceof ArrayBuffer) || ArrayBuffer.isView(charCodes)) {
-      charCodesBuffer = charCodes;
-    } else if (charCodes && (Symbol.iterator in charCodes)) {
-      charCodesBuffer = BufferUtils.fromUint16Iterable(charCodes);
-    } else {
-      throw new TypeError("charCodes");
+  static fromCharCodes(charCodes: Iterable<number>): RuneSequence {
+    const chars = [];
+    for (const charCode of charCodes) {
+      if (Uint16.isUint16(charCode) !== true) {
+        throw new TypeError("charCodes[*]");
+      }
+      chars.push(String.fromCharCode(charCode));
     }
-
-    if (BufferUtils.BYTE_ORDER === ByteOrder.BIG_ENDIAN) {
-      return RuneSequence.fromString(_utf16beDecode(charCodesBuffer));
-    } else {
-      return RuneSequence.fromString(_utf16leDecode(charCodesBuffer));
-    }
+    return RuneSequence.fromString(chars.join(StringEx.EMPTY));
   }
+
+  // charCodesが短いと6倍ほど遅いが、長ければ長いほどこちらが速くなる
+  // static fromCharCodes2(
+  //   charCodes: Iterable<number> | Uint16Array,
+  // ): RuneSequence {
+  //   let charCodesBuffer: ArrayBuffer; //TODO 面倒なことせずにfromCharCodeした方が速いのでは
+  //   if ((charCodes instanceof ArrayBuffer) || ArrayBuffer.isView(charCodes)) {
+  //     charCodesBuffer = charCodes;
+  //   } else if (charCodes && (Symbol.iterator in charCodes)) {
+  //     charCodesBuffer = BufferUtils.fromUint16Iterable(charCodes);
+  //   } else {
+  //     throw new TypeError("charCodes");
+  //   }
+  //   const decoded = (BufferUtils.BYTE_ORDER === ByteOrder.BIG_ENDIAN)
+  //     ? _utf16beDecode(charCodesBuffer)
+  //     : _utf16leDecode(charCodesBuffer);
+  //   return RuneSequence.fromString(decoded);
+  // }
 
   // //XXX options discardBom
   // static fromUtf32beEncoded(encoded: _Bytes): RuneSequence {
