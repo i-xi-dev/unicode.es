@@ -56,7 +56,7 @@ export namespace RuneString {
       return false;
     }
     if (
-      ((test as string).length === 1) && //XXX as stringしないとDNTで何故かエラー
+      (test.length === 1) &&
       CodePoint.isSurrogate(
         runeStringSequence[0].codePointAt(0) as CodePoint,
         true,
@@ -150,6 +150,10 @@ export namespace RuneString {
       return [charCode0, runeString.charCodeAt(1)];
     }
   }
+
+  //TODO fromUtf8Bytes(bytes: Iterable<number>): RuneString
+
+  //TODO toUtf8Bytes(runeString: RuneString, _checked = false): [Uint8] | [Uint8, Uint8] | [Uint8, Uint8, Uint8] | [Uint8, Uint8, Uint8, Uint8]
 
   export function planeOf(runeString: RuneString, _checked = false): Plane {
     if (_checked !== true) {

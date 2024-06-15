@@ -38,6 +38,8 @@ export class Rune {
     return Rune.fromString(RuneString.fromCharCodes(charCodes));
   }
 
+  //TODO fromUtf8Bytes(bytes: Iterable<number>): Rune
+
   duplicate(): Rune {
     return new Rune(this.#codePoint);
   }
@@ -53,6 +55,8 @@ export class Rune {
   toCharCodes(): [Uint16] | [Uint16, Uint16] {
     return RuneString.toCharCodes(this.#value, true);
   }
+
+  //TODO toUtf8Bytes(): [Uint8] | [Uint8, Uint8] | [Uint8, Uint8, Uint8] | [Uint8, Uint8, Uint8, Uint8]
 
   isBmp(): boolean {
     return CodePoint.isBmp(this.#codePoint, true);
