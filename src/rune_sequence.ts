@@ -1,3 +1,4 @@
+import { _Segmenter } from "./grapheme_cluster.ts";
 import { _Utf16be, _Utf16le, _Utf32be, _Utf32le, _Utf8 } from "./_encoding.ts";
 import { BufferUtils, SafeInteger, StringEx, Uint16 } from "../deps.ts";
 import { CodePoint } from "./code_point.ts";
@@ -14,13 +15,6 @@ function _bytesToBuffer(bytes: _Bytes): BufferSource {
   }
   throw new TypeError("bytes");
 }
-
-// let _sgmenter: WeakRef<Intl.Segmenter>;
-// function _splitToGraphemes(str: string, locales?: Array<string | Intl.Locale>): Array<string> {
-//   if (!_sgmenter || !_sgmenter.deref()){
-//     _sgmenter = new WeakRef(new Intl.Segmenter())
-//   }
-// }
 
 export class RuneSequence {
   readonly #runes: Array<Rune>;
@@ -161,9 +155,14 @@ export class RuneSequence {
 
   //XXX subsequence
 
-  //TODO grapheme cluster単位に分割(locale: Intl.Locale | string): Array<RuneSequence>
-  // toGraphemeClusters(locale?: Intl.Locale | string): Array<RuneSequence> {
-  // }
+  //TODO normalize(NFC,NFD,...)
+
+  toGraphemeClusters(localeTag: string): Array<RuneSequence> {
+    const graphemeClusters = _Segmenter.segment(this.toString(), localeTag);
+    return graphemeClusters.map((graphemeCluster) =>
+      RuneSequence.fromString(graphemeCluster)
+    );
+  }
 
   at(index: number): Rune | undefined {
     return this.#runes.at(index);

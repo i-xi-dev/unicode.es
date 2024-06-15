@@ -671,3 +671,54 @@ Deno.test("RuneSequence.prototype.[Symbol.iterator]()", () => {
   }
   assertStrictEquals(i, 4);
 });
+
+Deno.test("RuneSequence.prototype.toGraphemeClusters(string)", () => {
+  const r0 = RuneSequence.fromString("");
+  assertStrictEquals(r0.toGraphemeClusters("ja").length, 0);
+
+  assertThrows(
+    () => {
+      r0.toGraphemeClusters("");
+    },
+    RangeError,
+    //"",
+  );
+  assertThrows(
+    () => {
+      r0.toGraphemeClusters("a");
+    },
+    RangeError,
+    //"",
+  );
+  assertThrows(
+    () => {
+      r0.toGraphemeClusters("aaaa");
+    },
+    RangeError,
+    //"",
+  );
+
+  const r1 = RuneSequence.fromString("あ\u{10000}a1");
+  const r1g1 = r1.toGraphemeClusters("ja");
+  assertStrictEquals(r1g1.length, 4);
+  assertStrictEquals(r1g1[0].toString(), "あ");
+  assertStrictEquals(r1g1[1].toString(), "\u{10000}");
+  assertStrictEquals(r1g1[2].toString(), "a");
+  assertStrictEquals(r1g1[3].toString(), "1");
+
+  const r2 = RuneSequence.fromString("か1が2か\u30993👨‍👦4\u83288\u8328\u{E0100}9");
+  const r2g1 = r2.toGraphemeClusters("ja");
+  assertStrictEquals(r2g1.length, 12);
+  assertStrictEquals(r2g1[0].toString(), "か");
+  assertStrictEquals(r2g1[1].toString(), "1");
+  assertStrictEquals(r2g1[2].toString(), "が");
+  assertStrictEquals(r2g1[3].toString(), "2");
+  assertStrictEquals(r2g1[4].toString(), "か\u3099");
+  assertStrictEquals(r2g1[5].toString(), "3");
+  assertStrictEquals(r2g1[6].toString(), "👨‍👦");
+  assertStrictEquals(r2g1[7].toString(), "4");
+  assertStrictEquals(r2g1[8].toString(), "茨");
+  assertStrictEquals(r2g1[9].toString(), "8");
+  assertStrictEquals(r2g1[10].toString(), "茨󠄀");
+  assertStrictEquals(r2g1[11].toString(), "9");
+});
