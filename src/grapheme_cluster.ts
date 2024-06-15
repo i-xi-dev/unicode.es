@@ -30,7 +30,11 @@ export namespace GraphemeCluster {
     return _segment(str, localeTag);
   }
 
-  //XXX
+  //TODO
+  // - 不正なVSの除去
+  //    - 連続している
+  //    - 接合子で分解したとき先頭にある
+  //    - 接合子で分解したとき未定義のシーケンスになる → これはさすがに実装したくない
   // - VSの除去、付加
   // - 接合子での分割、結合
   // - ・・・

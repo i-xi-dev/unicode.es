@@ -677,6 +677,41 @@ Deno.test("RuneSequence.prototype.[Symbol.iterator]()", () => {
   assertStrictEquals(i, 4);
 });
 
+Deno.test("RuneSequence.prototype.withoutVariationSelectors()", () => {
+  assertStrictEquals(
+    RuneSequence.fromString("").withoutVariationSelectors().toString(),
+    "",
+  );
+
+  assertStrictEquals(
+    RuneSequence.fromString("が").withoutVariationSelectors().toString(),
+    "が",
+  );
+  assertStrictEquals(
+    RuneSequence.fromString("か\u3099").withoutVariationSelectors().toString(),
+    "か\u3099",
+  );
+  assertStrictEquals(
+    RuneSequence.fromString("👨‍👦").withoutVariationSelectors().toString(),
+    "👨‍👦",
+  );
+  assertStrictEquals(
+    RuneSequence.fromString("\u8328\u{E0100}\u8328\u{E0100}")
+      .withoutVariationSelectors()
+      .toString(),
+    "\u8328\u8328",
+  );
+  assertStrictEquals(
+    RuneSequence.fromString("\uFA30").withoutVariationSelectors().toString(),
+    "\uFA30",
+  );
+  assertStrictEquals(
+    RuneSequence.fromString("\u4FAE\uFE00").withoutVariationSelectors()
+      .toString(),
+    "\u4FAE",
+  );
+});
+
 Deno.test("RuneSequence.prototype.toNormalized(string)", () => {
   assertStrictEquals(
     RuneSequence.fromString("").toNormalized("NFC").toString(),

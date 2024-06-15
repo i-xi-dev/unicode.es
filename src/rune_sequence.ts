@@ -175,6 +175,22 @@ export class RuneSequence {
     return RuneSequence.fromString(this.toString().normalize(form));
   }
 
+  //XXX normalize(form): void 破壊的メソッド版
+
+  // すべてのVSを位置に関係なく除去（もともとRuneSequence自体は、不正な位置にVSがあっても関知しない）
+  withoutVariationSelectors(/*XXX options */): RuneSequence {
+    return RuneSequence.fromString(
+      this.toString().replaceAll(
+        /[\u180B-\u180F\uFE00-\uFE0F\u{E0100}-\u{E01EF}]/gu,
+        StringEx.EMPTY,
+      ),
+    );
+  }
+
+  //XXX withoutVariationSelectorsの破壊的メソッド版
+  // removeVariationSelectors(): void {
+  // }
+
   toGraphemeClusters(localeTag: string): Array<RuneSequence> {
     const graphemeClusters = GraphemeCluster.stringToGraphemeClusters(
       this.toString(),
