@@ -6,5 +6,3 @@ export * from "./src/plane.ts";
 export * from "./src/rune.ts";
 export * from "./src/rune_sequence.ts";
 export * from "./src/rune_string.ts";
-export * from "./src/utf16.ts";
-export * from "./src/utf32.ts";

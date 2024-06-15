@@ -1,4 +1,3 @@
-import { _Utf16be, _Utf16le, _Utf32be, _Utf32le, _Utf8 } from "./_encoding.ts";
 import { BufferUtils, SafeInteger, StringEx, Uint16 } from "../deps.ts";
 import { CodePoint } from "./code_point.ts";
 import { GraphemeCluster } from "./grapheme_cluster.ts";
@@ -65,23 +64,23 @@ export class RuneSequence {
     return new RuneSequence([...runes]);
   }
 
-  //XXX options discardBom
-  static fromUtf8Encoded(encoded: _Bytes): RuneSequence {
-    const bytes = _bytesToBuffer(encoded);
-    return RuneSequence.fromString(_Utf8.decode(bytes));
-  }
+  // //XXX options discardBom
+  // static fromUtf8Encoded(encoded: _Bytes): RuneSequence {
+  //   const bytes = _bytesToBuffer(encoded);
+  //   return RuneSequence.fromString(_Utf8.decode(bytes));
+  // }
 
-  //XXX options discardBom
-  static fromUtf16beEncoded(encoded: _Bytes): RuneSequence {
-    const bytes = _bytesToBuffer(encoded);
-    return RuneSequence.fromString(_Utf16be.decode(bytes));
-  }
+  // //XXX options discardBom
+  // static fromUtf16beEncoded(encoded: _Bytes): RuneSequence {
+  //   const bytes = _bytesToBuffer(encoded);
+  //   return RuneSequence.fromString(_Utf16be.decode(bytes));
+  // }
 
-  //XXX options discardBom
-  static fromUtf16leEncoded(encoded: _Bytes): RuneSequence {
-    const bytes = _bytesToBuffer(encoded);
-    return RuneSequence.fromString(_Utf16le.decode(bytes));
-  }
+  // //XXX options discardBom
+  // static fromUtf16leEncoded(encoded: _Bytes): RuneSequence {
+  //   const bytes = _bytesToBuffer(encoded);
+  //   return RuneSequence.fromString(_Utf16le.decode(bytes));
+  // }
 
   //XXX fromUtf16Encoded
 
@@ -117,17 +116,17 @@ export class RuneSequence {
   //   return RuneSequence.fromString(decoded);
   // }
 
-  //XXX options discardBom
-  static fromUtf32beEncoded(encoded: _Bytes): RuneSequence {
-    const bytes = _bytesToBuffer(encoded);
-    return RuneSequence.fromString(_Utf32be.decode(bytes));
-  }
+  // //XXX options discardBom
+  // static fromUtf32beEncoded(encoded: _Bytes): RuneSequence {
+  //   const bytes = _bytesToBuffer(encoded);
+  //   return RuneSequence.fromString(_Utf32be.decode(bytes));
+  // }
 
-  //XXX options discardBom
-  static fromUtf32leEncoded(encoded: _Bytes): RuneSequence {
-    const bytes = _bytesToBuffer(encoded);
-    return RuneSequence.fromString(_Utf32le.decode(bytes));
-  }
+  // //XXX options discardBom
+  // static fromUtf32leEncoded(encoded: _Bytes): RuneSequence {
+  //   const bytes = _bytesToBuffer(encoded);
+  //   return RuneSequence.fromString(_Utf32le.decode(bytes));
+  // }
 
   //XXX fromUtf32Encoded
 
@@ -221,20 +220,20 @@ export class RuneSequence {
     return this.#runes.map((rune) => rune.duplicate());
   }
 
-  //XXX options discardBom
-  toUtf8Encoded(): Uint8Array {
-    return _Utf8.encode(this.toString());
-  }
+  // //XXX options discardBom
+  // toUtf8Encoded(): Uint8Array {
+  //   return _Utf8.encode(this.toString());
+  // }
 
-  //XXX options discardBom
-  toUtf16beEncoded(): Uint8Array {
-    return _Utf16be.encode(this.toString());
-  }
+  // //XXX options discardBom
+  // toUtf16beEncoded(): Uint8Array {
+  //   return _Utf16be.encode(this.toString());
+  // }
 
-  //XXX options discardBom
-  toUtf16leEncoded(): Uint8Array {
-    return _Utf16le.encode(this.toString());
-  }
+  // //XXX options discardBom
+  // toUtf16leEncoded(): Uint8Array {
+  //   return _Utf16le.encode(this.toString());
+  // }
 
   //XXX toUtf16Encoded
 
@@ -242,15 +241,15 @@ export class RuneSequence {
     return this.#runes.map((rune) => rune.toCharCodes());
   }
 
-  //XXX options discardBom
-  toUtf32beEncoded(): Uint8Array {
-    return _Utf32be.encode(this.toString());
-  }
+  // //XXX options discardBom
+  // toUtf32beEncoded(): Uint8Array {
+  //   return _Utf32be.encode(this.toString());
+  // }
 
-  //XXX options discardBom
-  toUtf32leEncoded(): Uint8Array {
-    return _Utf32le.encode(this.toString());
-  }
+  // //XXX options discardBom
+  // toUtf32leEncoded(): Uint8Array {
+  //   return _Utf32le.encode(this.toString());
+  // }
 
   //XXX toUtf32Encoded
 

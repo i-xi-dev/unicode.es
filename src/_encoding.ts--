@@ -1,5 +1,5 @@
-import { Utf16 } from "./utf16.ts";
-import { Utf32 } from "./utf32.ts";
+import { Utf16 } from "./utf16.ts--";
+import { Utf32 } from "./utf32.ts--";
 
 /** @internal */
 export namespace _Utf8 {
