@@ -139,12 +139,6 @@ export class RuneSequence {
     return RuneSequence.fromRuneStrings(runeStrings);
   }
 
-  //XXX fromEncoded(encoded: _Bytes, decoder): RuneSequence
-
-  //XXX fromXxxxStream
-
-  //XXX fromxxxArray
-
   duplicate(): RuneSequence {
     return new RuneSequence(this.toRunes());
   }
@@ -153,10 +147,29 @@ export class RuneSequence {
 
   //XXX startsWith
 
-  //XXX subsequence
+  // 孤立サロゲートは絶対に発生しないが、結合文字は分解される可能性あり
+  subsequence(start: number, end?: number): RuneSequence {
+    if (SafeInteger.isNonNegativeSafeInteger(start) !== true) {
+      throw new TypeError("start");
+    }
+    if (start > this.runeCount) {
+      throw new RangeError("start");
+    }
+
+    if (typeof end === "number") {
+      if (SafeInteger.isNonNegativeSafeInteger(end) !== true) {
+        throw new TypeError("end");
+      }
+      if (end < start) {
+        throw new RangeError("end");
+      }
+    }
+
+    return new RuneSequence(this.#runes.slice(start, end));
+  }
 
   toNormalized(form: RuneSequence.NormalizationForm): RuneSequence {
-    if (Object.values( RuneSequence.NormalizationForm).includes(form)!==true){
+    if (Object.values(RuneSequence.NormalizationForm).includes(form) !== true) {
       throw new TypeError("form");
     }
     return RuneSequence.fromString(this.toString().normalize(form));
@@ -232,5 +245,6 @@ export namespace RuneSequence {
     FORM_C: "NFC",
     FORM_D: "NFD",
   } as const;
-  export type NormalizationForm = typeof NormalizationForm[keyof typeof NormalizationForm];
+  export type NormalizationForm =
+    typeof NormalizationForm[keyof typeof NormalizationForm];
 }

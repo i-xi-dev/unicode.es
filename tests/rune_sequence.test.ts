@@ -673,19 +673,49 @@ Deno.test("RuneSequence.prototype.[Symbol.iterator]()", () => {
 });
 
 Deno.test("RuneSequence.prototype.toNormalized(string)", () => {
-  assertStrictEquals(RuneSequence.fromString("").toNormalized("NFC").toString(), "");
+  assertStrictEquals(
+    RuneSequence.fromString("").toNormalized("NFC").toString(),
+    "",
+  );
 
-  assertStrictEquals(RuneSequence.fromString("が").toNormalized("NFC").toString(), "が");
-  assertStrictEquals(RuneSequence.fromString("か\u3099").toNormalized("NFC").toString(), "が");
-  assertStrictEquals(RuneSequence.fromString("👨‍👦").toNormalized("NFC").toString(), "👨‍👦");
-  assertStrictEquals(RuneSequence.fromString("\u8328\u{E0100}").toNormalized("NFC").toString(), "\u8328\u{E0100}");
+  assertStrictEquals(
+    RuneSequence.fromString("が").toNormalized("NFC").toString(),
+    "が",
+  );
+  assertStrictEquals(
+    RuneSequence.fromString("か\u3099").toNormalized("NFC").toString(),
+    "が",
+  );
+  assertStrictEquals(
+    RuneSequence.fromString("👨‍👦").toNormalized("NFC").toString(),
+    "👨‍👦",
+  );
+  assertStrictEquals(
+    RuneSequence.fromString("\u8328\u{E0100}").toNormalized("NFC").toString(),
+    "\u8328\u{E0100}",
+  );
 
-  assertStrictEquals(RuneSequence.fromString("").toNormalized("NFD").toString(), "");
+  assertStrictEquals(
+    RuneSequence.fromString("").toNormalized("NFD").toString(),
+    "",
+  );
 
-  assertStrictEquals(RuneSequence.fromString("が").toNormalized("NFD").toString(), "か\u3099");
-  assertStrictEquals(RuneSequence.fromString("か\u3099").toNormalized("NFD").toString(), "か\u3099");
-  assertStrictEquals(RuneSequence.fromString("👨‍👦").toNormalized("NFD").toString(), "👨‍👦");
-  assertStrictEquals(RuneSequence.fromString("\u8328\u{E0100}").toNormalized("NFD").toString(), "\u8328\u{E0100}");
+  assertStrictEquals(
+    RuneSequence.fromString("が").toNormalized("NFD").toString(),
+    "か\u3099",
+  );
+  assertStrictEquals(
+    RuneSequence.fromString("か\u3099").toNormalized("NFD").toString(),
+    "か\u3099",
+  );
+  assertStrictEquals(
+    RuneSequence.fromString("👨‍👦").toNormalized("NFD").toString(),
+    "👨‍👦",
+  );
+  assertStrictEquals(
+    RuneSequence.fromString("\u8328\u{E0100}").toNormalized("NFD").toString(),
+    "\u8328\u{E0100}",
+  );
 
   assertThrows(
     () => {
@@ -735,7 +765,9 @@ Deno.test("RuneSequence.prototype.toGraphemeClusters(string)", () => {
   assertStrictEquals(r1g1[2].toString(), "a");
   assertStrictEquals(r1g1[3].toString(), "1");
 
-  const r2 = RuneSequence.fromString("か1が2か\u30993👨‍👦4\u83288\u8328\u{E0100}9");
+  const r2 = RuneSequence.fromString(
+    "か1が2か\u30993👨‍👦4\u83288\u8328\u{E0100}9",
+  );
   const r2g1 = r2.toGraphemeClusters("ja");
   assertStrictEquals(r2g1.length, 12);
   assertStrictEquals(r2g1[0].toString(), "か");
@@ -750,4 +782,59 @@ Deno.test("RuneSequence.prototype.toGraphemeClusters(string)", () => {
   assertStrictEquals(r2g1[9].toString(), "8");
   assertStrictEquals(r2g1[10].toString(), "茨󠄀");
   assertStrictEquals(r2g1[11].toString(), "9");
+});
+
+Deno.test("RuneSequence.prototype.subsequence(number)", () => {
+  const r1 = RuneSequence.fromString("0123456789");
+  assertStrictEquals(r1.subsequence(0).toString(), "0123456789");
+  assertStrictEquals(r1.subsequence(0, 5).toString(), "01234");
+  assertStrictEquals(r1.subsequence(2).toString(), "23456789");
+  assertStrictEquals(r1.subsequence(2, 5).toString(), "234");
+  assertStrictEquals(r1.subsequence(9).toString(), "9");
+  assertStrictEquals(r1.subsequence(10).toString(), "");
+  assertStrictEquals(r1.subsequence(2, 2).toString(), "");
+  
+  assertThrows(
+    () => {
+      r1.subsequence("" as unknown as number);
+    },
+    TypeError,
+    "start",
+  );
+  assertThrows(
+    () => {
+      r1.subsequence(-1);
+    },
+    TypeError,
+    "start",
+  );
+  assertThrows(
+    () => {
+      r1.subsequence(11);
+    },
+    RangeError,
+    "start",
+  );
+
+  // assertThrows(
+  //   () => {
+  //     r1.subsequence(0, "" as unknown as number);
+  //   },
+  //   TypeError,
+  //   "end",
+  // );//XXX えらーにすべき？
+  assertThrows(
+    () => {
+      r1.subsequence(0, -1);
+    },
+    TypeError,
+    "end",
+  );
+  assertThrows(
+    () => {
+      r1.subsequence(2, 1);
+    },
+    RangeError,
+    "end",
+  );
 });
