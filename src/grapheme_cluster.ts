@@ -1,40 +1,37 @@
-type _SegmentResult = {
-  resolvedLocaleTag: string;
-  graphemeClusters: Array<string>;
-};
+// type _SegmentResult = {
+//   resolvedLocaleTag: string;
+//   graphemeClusters: Array<string>;
+// };
 
-function _segment(str: string, segmenter: Intl.Segmenter): _SegmentResult {
-  return {
-    resolvedLocaleTag: segmenter.resolvedOptions().locale,
-    graphemeClusters: [...segmenter.segment(str)].map((segment) =>
-      segment.segment
-    ),
-  };
-}
+let _lastSegmenter: WeakRef<Intl.Segmenter>;
 
-/** @internal */
-export namespace _Segmenter {
-  let _segmenter: WeakRef<Intl.Segmenter>;
-
-  export function segment(str: string, localeTag: string): Array<string> {
-    let segmenter: Intl.Segmenter;
-    const prev = _segmenter?.deref();
-    if (prev && (prev.resolvedOptions().locale === localeTag)) {
-      segmenter = prev;
-    } else {
-      segmenter = new Intl.Segmenter(localeTag, { granularity: "grapheme" });
-      const resolvedLocaleTag = segmenter.resolvedOptions().locale;
-      if (resolvedLocaleTag !== localeTag) {
-        throw new RangeError("localeTag");
-      }
-      _segmenter = new WeakRef(segmenter);
+function _segment(str: string, localeTag: string): Array<string> {
+  let segmenter: Intl.Segmenter;
+  const prev = _lastSegmenter?.deref();
+  if (prev && (prev.resolvedOptions().locale === localeTag)) {
+    segmenter = prev;
+  } else {
+    segmenter = new Intl.Segmenter(localeTag, { granularity: "grapheme" });
+    const resolvedLocaleTag = segmenter.resolvedOptions().locale;
+    if (resolvedLocaleTag !== localeTag) {
+      throw new RangeError("localeTag");
     }
-
-    return _segment(str, segmenter).graphemeClusters;
+    _lastSegmenter = new WeakRef(segmenter);
   }
+
+  return [...segmenter.segment(str)].map((segment) => segment.segment);
 }
 
-//XXX
-// - VSの除去、付加
-// - 接合子での分割、結合
-// -
+export namespace GraphemeCluster {
+  export function stringToGraphemeClusters(
+    str: string,
+    localeTag: string,
+  ): Array<string> {
+    return _segment(str, localeTag);
+  }
+
+  //XXX
+  // - VSの除去、付加
+  // - 接合子での分割、結合
+  // - ・・・
+}

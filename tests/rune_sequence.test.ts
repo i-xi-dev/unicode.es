@@ -699,6 +699,14 @@ Deno.test("RuneSequence.prototype.toNormalized(string)", () => {
     RuneSequence.fromString("\u8328\u{E0100}").toNormalized("NFC").toString(),
     "\u8328\u{E0100}",
   );
+  assertStrictEquals(
+    RuneSequence.fromString("\uFA30").toNormalized("NFC").toString(),
+    "\u4FAE",
+  );
+  assertStrictEquals(
+    RuneSequence.fromString("\u4FAE\uFE00").toNormalized("NFC").toString(),
+    "\u4FAE\uFE00",
+  );
 
   assertStrictEquals(
     RuneSequence.fromString("").toNormalized("NFD").toString(),
@@ -720,6 +728,14 @@ Deno.test("RuneSequence.prototype.toNormalized(string)", () => {
   assertStrictEquals(
     RuneSequence.fromString("\u8328\u{E0100}").toNormalized("NFD").toString(),
     "\u8328\u{E0100}",
+  );
+  assertStrictEquals(
+    RuneSequence.fromString("\uFA30").toNormalized("NFD").toString(),
+    "\u4FAE",
+  );
+  assertStrictEquals(
+    RuneSequence.fromString("\u4FAE\uFE00").toNormalized("NFD").toString(),
+    "\u4FAE\uFE00",
   );
 
   assertThrows(

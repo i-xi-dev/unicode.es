@@ -1,7 +1,7 @@
-import { _Segmenter } from "./grapheme_cluster.ts";
 import { _Utf16be, _Utf16le, _Utf32be, _Utf32le, _Utf8 } from "./_encoding.ts";
 import { BufferUtils, SafeInteger, StringEx, Uint16 } from "../deps.ts";
 import { CodePoint } from "./code_point.ts";
+import { GraphemeCluster } from "./grapheme_cluster.ts";
 import { Rune } from "./rune.ts";
 import { RuneString } from "./rune_string.ts";
 
@@ -176,7 +176,10 @@ export class RuneSequence {
   }
 
   toGraphemeClusters(localeTag: string): Array<RuneSequence> {
-    const graphemeClusters = _Segmenter.segment(this.toString(), localeTag);
+    const graphemeClusters = GraphemeCluster.stringToGraphemeClusters(
+      this.toString(),
+      localeTag,
+    );
     return graphemeClusters.map((graphemeCluster) =>
       RuneSequence.fromString(graphemeCluster)
     );
