@@ -68,7 +68,7 @@ export class RuneSequence {
   //XXX options discardBom
   static fromUtf8Encoded(encoded: _Bytes): RuneSequence {
     const bytes = _bytesToBuffer(encoded);
-    return RuneSequence.fromString(_Utf8.decode(bytes)); //TODO 孤立サロゲートの扱いがここだけ違う
+    return RuneSequence.fromString(_Utf8.decode(bytes));
   }
 
   //XXX options discardBom

@@ -182,11 +182,12 @@ Deno.test("RuneSequence.fromUtf8Encoded()", () => {
     RuneSequence.fromUtf8Encoded([227, 129, 130, 97, 49]).toString(),
     "あa1",
   );
-  assertStrictEquals(
-    RuneSequence.fromUtf8Encoded([227, 129, 130, 97, 239, 191, 189, 49])
-      .toString(),
-    //"あa\uD8001", //TODO utf16,32も同じ仕様か
-    "あa\uFFFD1",
+  assertThrows(
+    () => {
+      RuneSequence.fromUtf8Encoded([227, 129, 130, 97, 0xED, 0xA0, 0x80, 49]);
+    },
+    TypeError,
+    //"The encoded data is not valid.",
   );
 
   assertStrictEquals(
@@ -198,12 +199,14 @@ Deno.test("RuneSequence.fromUtf8Encoded()", () => {
       .toString(),
     "あa1",
   );
-  assertStrictEquals(
-    RuneSequence.fromUtf8Encoded(
-      Uint8Array.of(227, 129, 130, 97, 239, 191, 189, 49),
-    ).toString(),
-    //"あa\uD8001", //TODO utf16,32も同じ仕様か
-    "あa\uFFFD1",
+  assertThrows(
+    () => {
+      RuneSequence.fromUtf8Encoded(
+        Uint8Array.of(227, 129, 130, 97, 0xED, 0xA0, 0x80, 49),
+      );
+    },
+    TypeError,
+    //"The encoded data is not valid.",
   );
 
   assertStrictEquals(
@@ -215,12 +218,14 @@ Deno.test("RuneSequence.fromUtf8Encoded()", () => {
       .toString(),
     "あa1",
   );
-  assertStrictEquals(
-    RuneSequence.fromUtf8Encoded(
-      Uint8Array.of(227, 129, 130, 97, 239, 191, 189, 49).buffer,
-    ).toString(),
-    //"あa\uD8001", //TODO utf16,32も同じ仕様か
-    "あa\uFFFD1",
+  assertThrows(
+    () => {
+      RuneSequence.fromUtf8Encoded(
+        Uint8Array.of(227, 129, 130, 97, 0xED, 0xA0, 0x80, 49).buffer,
+      );
+    },
+    TypeError,
+    //"The encoded data is not valid.",
   );
 });
 
@@ -793,7 +798,7 @@ Deno.test("RuneSequence.prototype.subsequence(number)", () => {
   assertStrictEquals(r1.subsequence(9).toString(), "9");
   assertStrictEquals(r1.subsequence(10).toString(), "");
   assertStrictEquals(r1.subsequence(2, 2).toString(), "");
-  
+
   assertThrows(
     () => {
       r1.subsequence("" as unknown as number);
