@@ -155,7 +155,12 @@ export class RuneSequence {
 
   //XXX subsequence
 
-  //TODO normalize(NFC,NFD,...)
+  toNormalized(form: RuneSequence.NormalizationForm): RuneSequence {
+    if (Object.values( RuneSequence.NormalizationForm).includes(form)!==true){
+      throw new TypeError("form");
+    }
+    return RuneSequence.fromString(this.toString().normalize(form));
+  }
 
   toGraphemeClusters(localeTag: string): Array<RuneSequence> {
     const graphemeClusters = _Segmenter.segment(this.toString(), localeTag);
@@ -220,4 +225,12 @@ export class RuneSequence {
   toCodePoints(): Array<CodePoint> {
     return this.#runes.map((rune) => rune.toCodePoint());
   }
+}
+
+export namespace RuneSequence {
+  export const NormalizationForm = {
+    FORM_C: "NFC",
+    FORM_D: "NFD",
+  } as const;
+  export type NormalizationForm = typeof NormalizationForm[keyof typeof NormalizationForm];
 }

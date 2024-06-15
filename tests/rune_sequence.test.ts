@@ -672,6 +672,35 @@ Deno.test("RuneSequence.prototype.[Symbol.iterator]()", () => {
   assertStrictEquals(i, 4);
 });
 
+Deno.test("RuneSequence.prototype.toNormalized(string)", () => {
+  assertStrictEquals(RuneSequence.fromString("").toNormalized("NFC").toString(), "");
+
+  assertStrictEquals(RuneSequence.fromString("が").toNormalized("NFC").toString(), "が");
+  assertStrictEquals(RuneSequence.fromString("か\u3099").toNormalized("NFC").toString(), "が");
+  assertStrictEquals(RuneSequence.fromString("👨‍👦").toNormalized("NFC").toString(), "👨‍👦");
+  assertStrictEquals(RuneSequence.fromString("\u8328\u{E0100}").toNormalized("NFC").toString(), "\u8328\u{E0100}");
+
+  assertStrictEquals(RuneSequence.fromString("").toNormalized("NFD").toString(), "");
+
+  assertStrictEquals(RuneSequence.fromString("が").toNormalized("NFD").toString(), "か\u3099");
+  assertStrictEquals(RuneSequence.fromString("か\u3099").toNormalized("NFD").toString(), "か\u3099");
+  assertStrictEquals(RuneSequence.fromString("👨‍👦").toNormalized("NFD").toString(), "👨‍👦");
+  assertStrictEquals(RuneSequence.fromString("\u8328\u{E0100}").toNormalized("NFD").toString(), "\u8328\u{E0100}");
+
+  assertThrows(
+    () => {
+      RuneSequence.fromString("が").toNormalized("NFKD" as unknown as "NFC");
+    },
+    TypeError,
+  );
+  assertThrows(
+    () => {
+      RuneSequence.fromString("が").toNormalized("NFKC" as unknown as "NFC");
+    },
+    TypeError,
+  );
+});
+
 Deno.test("RuneSequence.prototype.toGraphemeClusters(string)", () => {
   const r0 = RuneSequence.fromString("");
   assertStrictEquals(r0.toGraphemeClusters("ja").length, 0);
