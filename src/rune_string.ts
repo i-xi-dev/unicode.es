@@ -153,7 +153,31 @@ export namespace RuneString {
 
   //TODO fromUtf8Bytes(bytes: Iterable<number>): RuneString
 
-  //TODO toUtf8Bytes(runeString: RuneString, _checked = false): [Uint8] | [Uint8, Uint8] | [Uint8, Uint8, Uint8] | [Uint8, Uint8, Uint8, Uint8]
+  // [Uint8] | [Uint8, Uint8] | [Uint8, Uint8, Uint8] | [Uint8, Uint8, Uint8, Uint8]
+  // export function toBytes(runeString: RuneString, _checked = false): Uint8Array{
+  //   if (_checked !== true) {
+  //     if (RuneString.isRuneString(runeString) !== true) {
+  //       throw new TypeError("runeString");
+  //     }
+  //   }
+
+  //   const codePoint = toCodePoint(runeString, true);
+  //   if (codePoint <= 0x7F) {
+  //     // U+0000 ～ U+007F
+  //     return Uint8Array.of(codePoint);
+  //   }
+  //   else if (codePoint <= 0x7FF){
+  //     // U+0080 ～ U+07FF
+  //     //TODO
+  //   }
+  //   else if (codePoint <= 0xFFFF){
+  //     // U+0800 ～ U+FFFF
+  //     //TODO
+  //   }else{
+  //     // U+10000 ～ U+10FFFF
+  //     //TODO
+  //   }
+  // }
 
   export function planeOf(runeString: RuneString, _checked = false): Plane {
     if (_checked !== true) {
